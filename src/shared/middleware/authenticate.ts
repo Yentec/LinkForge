@@ -1,4 +1,4 @@
-import type { FastifyRequest } from 'fastify';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { Errors } from '@/shared/errors/app-error';
 import { verifyAccessToken } from '@/shared/auth/jwt';
 import { sha256 } from '@/shared/auth/tokens';
@@ -54,8 +54,12 @@ export function getAuth(request: FastifyRequest): AuthContext {
 }
 
 export function requireScope(scope: string) {
-  return (request: FastifyRequest): void => {
+  return (request: FastifyRequest, _reply: FastifyReply, done: (err?: Error) => void): void => {
     const auth = getAuth(request);
-    if (!auth.scopes.includes(scope)) throw Errors.forbidden(`Missing scope: ${scope}`);
+    if (!auth.scopes.includes(scope)) {
+      done(Errors.forbidden(`Missing scope: ${scope}`));
+      return;
+    }
+    done();
   };
 }
