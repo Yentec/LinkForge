@@ -13,5 +13,37 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  refreshTokens RefreshToken[]
+  apiKeys       ApiKey[]
+
   @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  tokenHash String    @unique
+  userId    String    @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model ApiKey {
+  id         String    @id @default(uuid()) @db.Uuid
+  name       String
+  keyHash    String    @unique
+  prefix     String
+  scopes     String[]
+  userId     String    @db.Uuid
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastUsedAt DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+  @@map("api_keys")
 }

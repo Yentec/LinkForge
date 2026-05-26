@@ -1,8 +1,7 @@
-export type AppError = {
+export type AppError = Error & {
   readonly name: 'AppError';
   readonly code: string;
   readonly statusCode: number;
-  readonly message: string;
   readonly details?: unknown;
 };
 
@@ -18,13 +17,13 @@ export const createAppError = ({
   statusCode,
   message,
   details,
-}: CreateAppErrorParams): AppError => ({
-  name: 'AppError',
-  code,
-  statusCode,
-  message,
-  details,
-});
+}: CreateAppErrorParams): AppError =>
+  Object.assign(new Error(message), {
+    name: 'AppError' as const,
+    code,
+    statusCode,
+    details,
+  });
 
 export const Errors = {
   notFound: (resource: string): AppError =>

@@ -1,6 +1,6 @@
 {
   "name": "linkforge",
-  "version": "0.1.2",
+  "version": "0.3.0",
   "description": "URL shortener API with authentication, API keys, async click tracking and analytics.",
   "type": "module",
   "license": "MIT",
@@ -33,15 +33,18 @@
     "@fastify/helmet": "^13.0.2",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "argon2": "^0.44.0",
     "dotenv": "^17.4.2",
     "fastify": "^5.8.5",
     "ioredis": "^5.10.1",
+    "jose": "^6.2.3",
     "pg": "^8.21.0",
     "pino": "^10.3.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@testcontainers/postgresql": "^12.0.0",
     "@types/node": "^25.9.1",
     "@types/pg": "^8.20.0",
     "@vitest/coverage-v8": "^4.1.7",
@@ -53,6 +56,7 @@
     "tsx": "^4.22.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.4",
+    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.7"
   }
 }
