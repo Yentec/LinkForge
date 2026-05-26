@@ -10,6 +10,9 @@ jobs:
   quality:
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: postgresql://fake:fake@localhost:5432/fake
+
     steps:
       - uses: actions/checkout@v4
 
@@ -23,8 +26,6 @@ jobs:
 
       - name: Generate Prisma client
         run: npx prisma generate
-        env:
-          DATABASE_URL: postgresql://fake:fake@localhost:5432/fake
 
       - name: Lint
         run: npm run lint
@@ -40,6 +41,7 @@ jobs:
     needs: quality
 
     env:
+      DATABASE_URL: postgresql://fake:fake@localhost:5432/fake
       JWT_SECRET: ci-test-jwt-secret-at-least-32-chars!
       IP_HASH_SALT: ci-test-ip-hash-salt
       REDIS_URL: redis://localhost:6379
@@ -64,8 +66,6 @@ jobs:
 
       - name: Generate Prisma client
         run: npx prisma generate
-        env:
-          DATABASE_URL: postgresql://fake:fake@localhost:5432/fake
 
       - name: Test
         run: npm test
