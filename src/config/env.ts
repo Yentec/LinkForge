@@ -1,4 +1,8 @@
+import { config } from 'dotenv';
 import { z } from 'zod';
+
+// Loads .env if present. Never overrides variables already set (tests, CI, prod).
+config();
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
@@ -11,14 +15,12 @@ const envSchema = z.object({
   REDIS_URL: z.url(),
 
   JWT_SECRET: z.string().min(32),
-  JWT_REFRESH_SECRET: z.string().min(32),
   IP_HASH_SALT: z.string().min(16),
 });
 
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  // Fail fast: an app with an invalid config must never start.
   console.error('❌ Invalid environment variables:');
   console.error(JSON.stringify(z.flattenError(parsed.error).fieldErrors, null, 2));
   process.exit(1);
