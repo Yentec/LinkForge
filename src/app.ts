@@ -5,6 +5,8 @@ import cors from '@fastify/cors';
 import { loggerOptions } from '@/config/logger';
 import { registerErrorHandler } from '@/shared/errors/error-handler';
 import { healthRoutes } from '@/modules/health/health.routes';
+import { authRoutes } from './modules/auth/auth.routes';
+import { apiKeyRoutes } from './modules/api-keys/api-keys.routes';
 
 /**
  * Builds a fully configured Fastify instance without starting the server.
@@ -23,6 +25,14 @@ export async function buildApp(): Promise<FastifyInstance> {
   registerErrorHandler(app);
 
   await app.register(healthRoutes);
+
+  await app.register(
+    (v1) => {
+      v1.register(authRoutes);
+      v1.register(apiKeyRoutes);
+    },
+    { prefix: '/v1' },
+  );
 
   return app;
 }
