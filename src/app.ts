@@ -7,6 +7,7 @@ import { registerErrorHandler } from '@/shared/errors/error-handler';
 import { healthRoutes } from '@/modules/health/health.routes';
 import { authRoutes } from './modules/auth/auth.routes';
 import { apiKeyRoutes } from './modules/api-keys/api-keys.routes';
+import { linkRoutes } from './modules/links/links.routes';
 
 /**
  * Builds a fully configured Fastify instance without starting the server.
@@ -30,6 +31,7 @@ export async function buildApp(): Promise<FastifyInstance> {
     (v1) => {
       v1.register(authRoutes);
       v1.register(apiKeyRoutes);
+      v1.register(linkRoutes);
     },
     { prefix: '/v1' },
   );
