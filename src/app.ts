@@ -8,6 +8,7 @@ import { healthRoutes } from '@/modules/health/health.routes';
 import { authRoutes } from './modules/auth/auth.routes';
 import { apiKeyRoutes } from './modules/api-keys/api-keys.routes';
 import { linkRoutes } from './modules/links/links.routes';
+import { redirectRoutes } from './modules/redirect/redirect.routes';
 
 /**
  * Builds a fully configured Fastify instance without starting the server.
@@ -35,6 +36,9 @@ export async function buildApp(): Promise<FastifyInstance> {
     },
     { prefix: '/v1' },
   );
+
+  // Public redirect catch-all. Must be registered last.
+  await app.register(redirectRoutes);
 
   return app;
 }
