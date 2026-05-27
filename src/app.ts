@@ -9,6 +9,7 @@ import { authRoutes } from './modules/auth/auth.routes';
 import { apiKeyRoutes } from './modules/api-keys/api-keys.routes';
 import { linkRoutes } from './modules/links/links.routes';
 import { redirectRoutes } from './modules/redirect/redirect.routes';
+import { analyticsRoutes } from './modules/analytics/analytics.routes';
 
 /**
  * Builds a fully configured Fastify instance without starting the server.
@@ -33,6 +34,7 @@ export async function buildApp(): Promise<FastifyInstance> {
       v1.register(authRoutes);
       v1.register(apiKeyRoutes);
       v1.register(linkRoutes);
+      v1.register(analyticsRoutes);
     },
     { prefix: '/v1' },
   );
