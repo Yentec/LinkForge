@@ -60,7 +60,25 @@ model Link {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
+  clicks Click[]
+  
   // Cursor pagination scans by (userId, createdAt, id).
   @@index([userId, createdAt, id])
   @@map("links")
+}
+
+model Click {
+  id           String   @id @default(uuid()) @db.Uuid
+  linkId       String   @db.Uuid
+  link         Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  country      String?
+  deviceType   String
+  browser      String?
+  referrerHost String?
+  ipHash       String
+  createdAt    DateTime @default(now())
+
+  // Analytics queries scan by link over a time window.
+  @@index([linkId, createdAt])
+  @@map("clicks")
 }
