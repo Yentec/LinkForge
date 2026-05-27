@@ -9,6 +9,8 @@ type CreateClickData = {
   ipHash: string;
 };
 
+export type ClickRepository = ReturnType<typeof createClickRepository>;
+
 export const createClickRepository = (db: PrismaClient) => {
   return {
     create(data: CreateClickData) {
