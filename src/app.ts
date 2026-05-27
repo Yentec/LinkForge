@@ -10,6 +10,7 @@ import { apiKeyRoutes } from './modules/api-keys/api-keys.routes';
 import { linkRoutes } from './modules/links/links.routes';
 import { redirectRoutes } from './modules/redirect/redirect.routes';
 import { analyticsRoutes } from './modules/analytics/analytics.routes';
+import { docsRoutes } from './modules/docs/docs.routes';
 
 /**
  * Builds a fully configured Fastify instance without starting the server.
@@ -22,12 +23,21 @@ export async function buildApp(): Promise<FastifyInstance> {
     trustProxy: true,
   });
 
-  await app.register(helmet);
+  // CSP disabled: the only HTML we serve is the Scalar docs UI, which uses inline
+  // scripts. A pure JSON API gains little from CSP; all other helmet headers stay on.
+  await app.register(helmet, { contentSecurityPolicy: false });
   await app.register(cors, { origin: true });
 
   registerErrorHandler(app);
 
   await app.register(healthRoutes);
+  await app.register(docsRoutes);
+
+  // Interactive API reference at /docs, reading the derived OpenAPI document.
+  await app.register(import('@scalar/fastify-api-reference'), {
+    routePrefix: '/docs',
+    configuration: { url: '/openapi.json', title: 'LinkForge API' },
+  });
 
   await app.register(
     (v1) => {
