@@ -5,4 +5,4 @@ export interface ClickJobData {
   referrer: string | null;
 }
 
-export const CLICK_QUEUE_NAME = 'clicks';
+export const CLICK_QUEUE_NAME = process.env['NODE_ENV'] === 'test' ? 'clicks-test' : 'clicks';
