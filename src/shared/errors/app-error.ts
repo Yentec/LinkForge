@@ -62,6 +62,13 @@ export const Errors = {
       message,
     }),
 
+  gone: (message: string): AppError =>
+    createAppError({
+      code: 'GONE',
+      statusCode: 410,
+      message,
+    }),
+
   rateLimited: (retryAfter: number): AppError =>
     createAppError({
       code: 'RATE_LIMITED',
