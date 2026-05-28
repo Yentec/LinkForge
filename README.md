@@ -33,7 +33,7 @@ Demo account: `demo@linkforge.dev` / `DemoUser2026!`
 
 ## Tech stack
 
-Node.js 22 · TypeScript (strict) · Fastify 5 · Prisma 6 · PostgreSQL 16 · Redis 7 · BullMQ · Zod 4 · Pino · Vitest · Testcontainers
+Node.js 22 · TypeScript (strict) · Fastify 5 · Prisma 7 · PostgreSQL 16 · Redis 7 · BullMQ · Zod 4 · Pino · Vitest · Testcontainers
 
 ## Architecture
 
