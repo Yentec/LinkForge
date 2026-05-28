@@ -1,0 +1,54 @@
+@base = http://localhost:3000
+@email = you@example.com
+@password = SuperSecret123
+
+### Register
+# @name register
+POST {{base}}/v1/auth/register
+Content-Type: application/json
+
+{ "email": "{{email}}", "password": "{{password}}" }
+
+###
+@token = {{register.response.body.accessToken}}
+@refresh = {{register.response.body.refreshToken}}
+
+### Login
+POST {{base}}/v1/auth/login
+Content-Type: application/json
+
+{ "email": "{{email}}", "password": "{{password}}" }
+
+### Me
+GET {{base}}/v1/auth/me
+Authorization: Bearer {{token}}
+
+### Create a link
+# @name createLink
+POST {{base}}/v1/links
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Idempotency-Key: demo-1
+
+{ "target": "https://example.com/article" }
+
+###
+@linkId = {{createLink.response.body.id}}
+@code = {{createLink.response.body.code}}
+
+### List links
+GET {{base}}/v1/links?limit=10
+Authorization: Bearer {{token}}
+
+### Public redirect
+GET {{base}}/{{code}}
+
+### Stats
+GET {{base}}/v1/links/{{linkId}}/stats?interval=day
+Authorization: Bearer {{token}}
+
+### Refresh
+POST {{base}}/v1/auth/refresh
+Content-Type: application/json
+
+{ "refreshToken": "{{refresh}}" }
