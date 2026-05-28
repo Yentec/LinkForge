@@ -1,0 +1,30 @@
+# Blueprint for Render. Connect this repo in the Render dashboard and the
+# web service is provisioned from this file. Postgres and Redis live on Neon
+# and Upstash respectively; their connection strings are injected via env vars.
+services:
+  - type: web
+    name: linkforge
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 3000
+      - key: LOG_LEVEL
+        value: info
+      - key: BASE_URL
+        sync: false # set in Render dashboard to https://<service>.onrender.com
+      - key: DATABASE_URL
+        sync: false # paste the Neon pooled connection string
+      - key: REDIS_URL
+        sync: false # paste the Upstash rediss:// URL
+      - key: JWT_SECRET
+        generateValue: true
+      - key: IP_HASH_SALT
+        generateValue: true

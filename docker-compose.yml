@@ -1,4 +1,22 @@
 services:
+  app:
+    build: .
+    container_name: linkforge-app
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://linkforge:linkforge@postgres:5432/linkforge
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev-only-change-me-to-a-32-char-minimum-secret
+      IP_HASH_SALT: dev-only-16-chars-min
+      BASE_URL: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   postgres:
     image: postgres:16-alpine
     container_name: linkforge-postgres
