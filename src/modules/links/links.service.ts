@@ -74,11 +74,16 @@ export function createLinksService(repo: LinksRepository, cache: CacheService) {
 
       const code = input.customSlug ?? (await generateUniqueCode());
 
+      const defaultExpiry =
+        env.LINK_DEFAULT_TTL_DAYS > 0
+          ? new Date(Date.now() + env.LINK_DEFAULT_TTL_DAYS * 86_400_000)
+          : null;
+
       const link = await repo.create({
         code,
         target: input.target,
         userId,
-        expiresAt: input.expiresAt ? new Date(input.expiresAt) : null,
+        expiresAt: input.expiresAt ? new Date(input.expiresAt) : defaultExpiry,
       });
 
       if (idempotencyKey) {
