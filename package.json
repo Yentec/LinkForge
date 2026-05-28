@@ -1,6 +1,6 @@
 {
   "name": "linkforge",
-  "version": "0.7.2",
+  "version": "0.7.4",
   "description": "URL shortener API with authentication, API keys, async click tracking and analytics.",
   "type": "module",
   "license": "MIT",
