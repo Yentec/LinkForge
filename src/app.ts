@@ -38,8 +38,9 @@ export async function buildApp(): Promise<FastifyInstance> {
     // Key by API key when present, else by IP.
     keyGenerator: (request) =>
       typeof request.headers['x-api-key'] === 'string' ? request.headers['x-api-key'] : request.ip,
-    // Don't rate-limit health probes or the docs UI.
+    // Don't rate-limit health probes, docs UI, or the test suite.
     allowList: (request) =>
+      process.env['NODE_ENV'] === 'test' ||
       request.url.startsWith('/health') ||
       request.url.startsWith('/ready') ||
       request.url.startsWith('/docs') ||
