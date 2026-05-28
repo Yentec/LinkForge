@@ -73,12 +73,13 @@ src/
 │ ├── analytics/ # agrégations SQL, stats cachées
 │ ├── docs/ # montage de la route /openapi.json + Scalar
 │ ├── health/ # /health (liveness), /ready (readiness)
+│   ├── maintenance/   # cron de nettoyage (liens expirés, comptes anciens)
 │ └── <module>/ # .routes .controller .service .repository .schemas .types
 ├── shared/
 │ ├── auth/ # password (Argon2id), jwt (jose), tokens (opaques + sha256)
 │ ├── cache/ # connexion Redis (ioredis) + CacheService JSON
 │ ├── errors/ # AppError + error-handler global
-│ ├── middleware/ # authenticate, idempotency (rate-limit optionnel)
+│ ├── middleware/ # authenticate, idempotency (rate-limit)
 │ ├── queue/ # factory de connexion BullMQ
 │ ├── geo/ # résolveur de pays best-effort (null par défaut, pluggable)
 │ └── utils/ # short-code (nanoid), classifieur UA maison, validateur URL anti-SSRF
