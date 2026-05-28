@@ -145,7 +145,6 @@ A few choices that aren't obvious from the code:
 
 Not implemented, deliberately:
 
-- Rate limiting per API key (Redis sliding window) — easy add via `@fastify/rate-limit`.
 - Webhook on click events, signed with HMAC-SHA256.
 - Real GeoIP via MaxMind GeoLite2, behind an env flag.
 - Refresh-token-reuse detection: revoke the entire token chain on replay.
