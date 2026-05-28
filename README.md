@@ -93,7 +93,8 @@ src/
 │   ├── tracking/      BullMQ queue, worker, click processor
 │   ├── analytics/     SQL aggregations, cached stats
 │   ├── docs/          OpenAPI document and Scalar mount
-│   └── health/        liveness, readiness
+│   ├── health/        liveness, readiness
+│   └── maintenance/   cleanup cron job
 ├── shared/
 │   ├── auth/          password hashing, JWT, opaque tokens
 │   ├── cache/         Redis connection, JSON cache service

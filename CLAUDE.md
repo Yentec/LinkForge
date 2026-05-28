@@ -73,7 +73,7 @@ src/
 │ ├── analytics/ # agrégations SQL, stats cachées
 │ ├── docs/ # montage de la route /openapi.json + Scalar
 │ ├── health/ # /health (liveness), /ready (readiness)
-│   ├── maintenance/   # cron de nettoyage (liens expirés, comptes anciens)
+│ ├── maintenance/   # cron de nettoyage (liens expirés, comptes anciens)
 │ └── <module>/ # .routes .controller .service .repository .schemas .types
 ├── shared/
 │ ├── auth/ # password (Argon2id), jwt (jose), tokens (opaques + sha256)
