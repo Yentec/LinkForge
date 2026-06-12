@@ -71,6 +71,31 @@ describe('Auth flow', () => {
     expect(reused.statusCode).toBe(401);
   });
 
+  it('revokes the entire chain when a rotated token is replayed', async () => {
+    const { refreshToken: tokenA } = (await register()).json<{ refreshToken: string }>();
+
+    // Normal rotation: tokenA → tokenB
+    const { refreshToken: tokenB } = (
+      await app.inject({ method: 'POST', url: '/v1/auth/refresh', payload: { refreshToken: tokenA } })
+    ).json<{ refreshToken: string }>();
+
+    // Replay tokenA (already rotated): chain must be revoked
+    const replay = await app.inject({
+      method: 'POST',
+      url: '/v1/auth/refresh',
+      payload: { refreshToken: tokenA },
+    });
+    expect(replay.statusCode).toBe(401);
+
+    // tokenB must also be revoked (chain revocation)
+    const withTokenB = await app.inject({
+      method: 'POST',
+      url: '/v1/auth/refresh',
+      payload: { refreshToken: tokenB },
+    });
+    expect(withTokenB.statusCode).toBe(401);
+  });
+
   it('protects /auth/me and accepts a Bearer token', async () => {
     const { accessToken } = (await register()).json<{ accessToken: string }>();
 
