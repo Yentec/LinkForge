@@ -25,7 +25,12 @@ describe('Auth flow', () => {
   it('registers a new user and returns a token pair', async () => {
     const res = await register();
     expect(res.statusCode).toBe(201);
-    const body = res.json<{ tokenType: string; expiresIn: number; accessToken: string; refreshToken: string }>();
+    const body = res.json<{
+      tokenType: string;
+      expiresIn: number;
+      accessToken: string;
+      refreshToken: string;
+    }>();
     expect(body).toMatchObject({ tokenType: 'Bearer', expiresIn: 900 });
     expect(typeof body.accessToken).toBe('string');
     expect(typeof body.refreshToken).toBe('string');

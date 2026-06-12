@@ -1,7 +1,9 @@
+import { randomUUID } from 'crypto';
 import { Errors } from '@/shared/errors/app-error';
 import { hashPassword, verifyPassword } from '@/shared/auth/password';
 import { ACCESS_TTL_SECONDS, signAccessToken } from '@/shared/auth/jwt';
 import { generateToken, sha256 } from '@/shared/auth/tokens';
+import { logger } from '@/config/logger';
 
 import type { createAuthRepository } from './auth.repository';
 
@@ -19,7 +21,11 @@ type AuthRepository = ReturnType<typeof createAuthRepository>;
 export type AuthService = ReturnType<typeof createAuthService>;
 
 export function createAuthService(repo: AuthRepository) {
-  async function issueTokens(userId: string, email: string): Promise<AuthTokens> {
+  async function issueTokens(
+    userId: string,
+    email: string,
+    chainId = randomUUID(),
+  ): Promise<AuthTokens> {
     const accessToken = await signAccessToken({ userId, email });
 
     const refreshToken = generateToken();
@@ -28,6 +34,7 @@ export function createAuthService(repo: AuthRepository) {
       sha256(refreshToken),
       userId,
       new Date(Date.now() + REFRESH_TTL_MS),
+      chainId,
     );
 
     return {
@@ -71,14 +78,24 @@ export function createAuthService(repo: AuthRepository) {
     async refresh(rawToken: string): Promise<AuthTokens> {
       const stored = await repo.findRefreshToken(sha256(rawToken));
 
-      if (!stored || stored.revokedAt || stored.expiresAt < new Date()) {
+      if (!stored || stored.expiresAt < new Date()) {
         throw Errors.unauthorized('Invalid refresh token');
       }
 
-      // Rotation: token is single-use
+      if (stored.revokedAt) {
+        // Presented token was already rotated: replay detected, revoke entire chain.
+        await repo.revokeChain(stored.chainId);
+        logger.warn(
+          { userId: stored.userId, chainId: stored.chainId },
+          'refresh token replay detected — chain revoked',
+        );
+        throw Errors.unauthorized('Invalid refresh token');
+      }
+
+      // Rotation: token is single-use, new token inherits the same chain.
       await repo.revokeRefreshToken(stored.id);
 
-      return issueTokens(stored.userId, stored.user.email);
+      return issueTokens(stored.userId, stored.user.email, stored.chainId);
     },
 
     async logout(rawToken: string): Promise<void> {
