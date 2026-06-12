@@ -14,12 +14,13 @@ export function createAuthRepository(db: PrismaClient) {
       });
     },
 
-    createRefreshToken(tokenHash: string, userId: string, expiresAt: Date) {
+    createRefreshToken(tokenHash: string, userId: string, expiresAt: Date, chainId: string) {
       return db.refreshToken.create({
         data: {
           tokenHash,
           userId,
           expiresAt,
+          chainId,
         },
       });
     },
@@ -34,6 +35,13 @@ export function createAuthRepository(db: PrismaClient) {
     revokeRefreshToken(id: string) {
       return db.refreshToken.update({
         where: { id },
+        data: { revokedAt: new Date() },
+      });
+    },
+
+    revokeChain(chainId: string) {
+      return db.refreshToken.updateMany({
+        where: { chainId, revokedAt: null },
         data: { revokedAt: new Date() },
       });
     },
