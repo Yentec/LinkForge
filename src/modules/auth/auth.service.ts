@@ -24,7 +24,7 @@ export function createAuthService(repo: AuthRepository) {
   async function issueTokens(
     userId: string,
     email: string,
-    chainId = randomUUID(),
+    chainId: string = randomUUID(),
   ): Promise<AuthTokens> {
     const accessToken = await signAccessToken({ userId, email });
 
