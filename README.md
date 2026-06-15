@@ -41,6 +41,33 @@ Node.js 22 · TypeScript (strict) · Fastify 5 · Prisma 7 · PostgreSQL 16 · R
 
 Single Node process, layered modules, in-process BullMQ worker. State on Neon (Postgres) and Upstash (Redis). Full details in [`docs/architecture.md`](docs/architecture.md).
 
+## Performance
+
+Redirect hot-path benchmark (`GET /:code`, cache warm, 100 VUs, ~60 s).
+Run locally against Docker Compose to avoid the production rate limit.
+
+| Metric | Local (Docker Compose) |
+|--------|------------------------|
+| p50    | 45 ms                  |
+| p95    | 88 ms                  |
+| p99    | 103 ms                 |
+| req/s  | ~1 530                 |
+
+```bash
+# Prerequisites: docker compose up -d && npm run dev && npm run db:seed
+
+# Via Docker (no local k6 install needed):
+docker run -i grafana/k6 run -e BASE_URL=http://host.docker.internal:3000 - < tests/load/redirect.js
+
+# With k6 installed locally:
+k6 run tests/load/redirect.js
+
+# Against production (warm up first — Render free tier sleeps after 15 min):
+docker run -i grafana/k6 run -e BASE_URL=https://linkforge-538y.onrender.com - < tests/load/redirect.js
+```
+
+> The production instance rate-limits at 100 req/min per IP — throughput figures from a single-machine run reflect this safeguard, not raw server capacity. See [ADR 0007](docs/adr/0007-redirect-latency-baseline.md) for context.
+
 ## Quickstart
 
 ```bash
@@ -141,6 +168,8 @@ A few choices that aren't obvious from the code:
 - **Zod 4 as single source of truth.** Validation, static types and the OpenAPI document all come from the same schemas via `z.toJSONSchema()`. ([ADR 0003](docs/adr/0003-zod-as-source-of-truth.md))
 - **In-house UA classifier** to avoid `ua-parser-js` v2+ AGPL licensing. ([ADR 0004](docs/adr/0004-no-ua-parser-js.md))
 - **Asynchronous click tracking** keeps redirect latency bounded by the cache, regardless of DB or geo-resolver issues. ([ADR 0005](docs/adr/0005-async-click-tracking.md))
+- **Refresh-token reuse detection** via chain revocation: replaying a used token revokes the entire session. ([ADR 0006](docs/adr/0006-refresh-token-reuse-detection.md))
+- **Redirect latency baseline** measured with k6 to confirm the async-tracking architectural bet. ([ADR 0007](docs/adr/0007-redirect-latency-baseline.md))
 
 ## Roadmap
 
@@ -148,7 +177,6 @@ Not implemented, deliberately:
 
 - Webhook on click events, signed with HMAC-SHA256.
 - Real GeoIP via MaxMind GeoLite2, behind an env flag.
-- Refresh-token-reuse detection: revoke the entire token chain on replay.
 - Workspaces / team accounts.
 
 ## License
