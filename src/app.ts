@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import Fastify, { type FastifyInstance } from 'fastify';
 import helmet from '@fastify/helmet';
 import cors from '@fastify/cors';
+import { env } from '@/config/env';
 import { loggerOptions } from '@/config/logger';
 import { registerErrorHandler } from '@/shared/errors/error-handler';
 import { healthRoutes } from '@/modules/health/health.routes';
@@ -32,7 +33,7 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   // ... après await app.register(cors, ...) :
   await app.register(rateLimit, {
-    max: 100,
+    max: env.RATE_LIMIT_MAX,
     timeWindow: '1 minute',
     redis,
     // Key by API key when present, else by IP.
