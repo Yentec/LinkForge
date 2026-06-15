@@ -20,6 +20,9 @@ const envSchema = z.object({
   // Default link lifetime in days when the client provides no expiresAt.
   // 0 disables the default (links never expire). Set to e.g. 7 in production.
   LINK_DEFAULT_TTL_DAYS: z.coerce.number().int().min(0).default(0),
+
+  // Rate limit per IP per minute. Raise locally for load testing; keep ≤ 100 in production.
+  RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
 });
 
 const parsed = envSchema.safeParse(process.env);
