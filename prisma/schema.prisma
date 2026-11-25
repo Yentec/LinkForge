@@ -61,7 +61,10 @@ model Link {
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-
+// Relation avec l'utilisateur qui a créé le lien
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
   clicks Click[]
   
   // Cursor pagination scans by (userId, createdAt, id).
